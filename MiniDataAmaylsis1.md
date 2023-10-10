@@ -394,31 +394,111 @@ sufficient comments for a reader to understand your reasoning and code.
 
 <!-------------------------- Start your work below ---------------------------->
 
-## Plot the distribution of a numeric variable. Chose this exercise to understand the distribution of the number of storeys in the apartment buildings.
+1.  Plot the distribution of a numeric variable. Chose this exercise to
+    understand the distribution of the number of storeys in the
+    apartment buildings.
 
-storeys \<- ggplot(apt_buildings, aes(x=no_of_storeys)) +
-geom_histogram(binwidth = 1) \##create histogram for number of storeys
-in apartment buildings, adjusted bin width to see each storey number
+``` r
+storeys <- ggplot(apt_buildings, aes(x=no_of_storeys)) + geom_histogram(binwidth = 1)
+```
+
+Here I’m creating a histogram of the number of storeys in the apartment
+buildings. I also adjusted bin width to see each storey number.
+
+``` r
 print(storeys)
+```
 
-## Explore the relationship between 2 variables in a plot. I would like to use this exercise to explore the relationship between the year the appartment was built and the number of storeys that it contains to start answering the research question listed in Exercise 1.4.
+![](MiniDataAmaylsis1_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
 
-StoreysXYearBuilt \<- ggplot(apt_buildings, aes(x = year_built, y =
-no_of_storeys)) + geom_point() \##plot relationship between year
-apartment was built and number of storeys in apartment.
+2.  Explore the relationship between 2 variables in a plot. I would like
+    to use this exercise to explore the relationship between the year
+    the appartment was built and the number of storeys that it contains
+    to start answering the research question listed in Exercise 1.4.
+
+``` r
+StoreysXYearBuilt <- ggplot(apt_buildings, aes(x = year_built, y = no_of_storeys)) + geom_point()
+```
+
+Here I am plotting the relationship between the year the apartment was
+built and the number of storeys in the apartment.
+
+``` r
 print(StoreysXYearBuilt)
+```
 
-## Make a new tibble with a subset of your data, with variables and observations that you are interested in exploring. I am doing this to remove variables I am uninterested in (addresses, property manager, etc.).
+    ## Warning: Removed 13 rows containing missing values (`geom_point()`).
 
-apt_build2.0 \<- as_tibble(select(apt_buildings, id, air_conditioning,
-balconies, laundry_room, no_of_elevators, pets_allowed, year_built,
-no_of_storeys, no_of_units)) \##create tibble with desired variables,
-including all observations. print(apt_build2.0)
+![](MiniDataAmaylsis1_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
 
-## Filter observations in your data according to your own criteria. Filtering to only see apartments built after 1950 to use for future research questions.
+3.  Make a new tibble with a subset of your data, with variables and
+    observations that you are interested in exploring. I am doing this
+    to remove variables I am uninterested in (addresses, property
+    manager, etc.).
 
-apt_1950 \<- filter(apt_buildings, year_built \>1950) \##filter
-apartment buildings to only show those built after 1950 print(apt_1950)
+``` r
+apt_build2.0 <- as_tibble(select(apt_buildings, id, air_conditioning, balconies, laundry_room, no_of_elevators, pets_allowed, year_built, no_of_storeys, no_of_units))
+```
+
+Here I am creating a tibble with my desired variables, including all
+observations for each of them.
+
+``` r
+print(apt_build2.0)
+```
+
+    ## # A tibble: 3,455 × 9
+    ##       id air_conditioning balconies laundry_room no_of_elevators pets_allowed
+    ##    <dbl> <chr>            <chr>     <chr>                  <dbl> <chr>       
+    ##  1 10359 NONE             YES       YES                        3 YES         
+    ##  2 10360 NONE             YES       YES                        3 YES         
+    ##  3 10361 NONE             YES       YES                        0 YES         
+    ##  4 10362 NONE             YES       YES                        1 YES         
+    ##  5 10363 NONE             NO        YES                        0 YES         
+    ##  6 10364 NONE             NO        YES                        0 YES         
+    ##  7 10365 NONE             NO        YES                        0 YES         
+    ##  8 10366 CENTRAL AIR      YES       YES                        2 YES         
+    ##  9 10367 NONE             YES       YES                        4 YES         
+    ## 10 10368 NONE             YES       YES                        2 YES         
+    ## # ℹ 3,445 more rows
+    ## # ℹ 3 more variables: year_built <dbl>, no_of_storeys <dbl>, no_of_units <dbl>
+
+4.  Filter observations in your data according to your own criteria.
+    Filtering to only see apartments built after 1950 to use for future
+    research questions.
+
+``` r
+apt_1950 <- filter(apt_buildings, year_built >1950)
+```
+
+Here I am filtering to only show apartment buildings that were built
+after 1950.
+
+``` r
+print(apt_1950)
+```
+
+    ## # A tibble: 2,894 × 37
+    ##       id air_conditioning amenities             balconies barrier_free_accessi…¹
+    ##    <dbl> <chr>            <chr>                 <chr>     <chr>                 
+    ##  1 10359 NONE             Outdoor rec faciliti… YES       YES                   
+    ##  2 10360 NONE             Outdoor pool          YES       NO                    
+    ##  3 10362 NONE             <NA>                  YES       YES                   
+    ##  4 10364 NONE             <NA>                  NO        NO                    
+    ##  5 10365 NONE             <NA>                  NO        YES                   
+    ##  6 10366 CENTRAL AIR      Indoor pool , Indoor… YES       NO                    
+    ##  7 10367 NONE             <NA>                  YES       YES                   
+    ##  8 10368 NONE             Indoor recreation ro… YES       YES                   
+    ##  9 10370 NONE             <NA>                  YES       NO                    
+    ## 10 10371 NONE             <NA>                  YES       YES                   
+    ## # ℹ 2,884 more rows
+    ## # ℹ abbreviated name: ¹​barrier_free_accessibilty_entr
+    ## # ℹ 32 more variables: bike_parking <chr>, exterior_fire_escape <chr>,
+    ## #   fire_alarm <chr>, garbage_chutes <chr>, heating_type <chr>, intercom <chr>,
+    ## #   laundry_room <chr>, locker_or_storage_room <chr>, no_of_elevators <dbl>,
+    ## #   parking_type <chr>, pets_allowed <chr>, prop_management_company_name <chr>,
+    ## #   property_type <chr>, rsn <dbl>, separate_gas_meters <chr>, …
+
 <!----------------------------------------------------------------------------->
 
 # Task 3: Choose research questions
@@ -438,7 +518,9 @@ Write the 4 questions and any additional comments below.
 3.  Is there a relationship between the number of elevators in an
     apartment building and when the apartment was built?
 4.  What is the distribution of the number of units in the apartment
-    buildings. <!----------------------------->
+    buildings.
+
+<!----------------------------->
 
 # Overall reproducibility/Cleanliness/Coherence Checklist
 

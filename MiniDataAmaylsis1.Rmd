@@ -158,22 +158,53 @@ Make sure that you're using dplyr and ggplot2 rather than base R for this task. 
 2.2 **(4 points)** For each of the 4 exercises that you complete, provide a *brief explanation* of why you chose that exercise in relation to your data (in other words, why does it make sense to do that?), and sufficient comments for a reader to understand your reasoning and code.
 
 <!-------------------------- Start your work below ---------------------------->
-## Plot the distribution of a numeric variable. Chose this exercise to understand the distribution of the number of storeys in the apartment buildings.
-storeys <- ggplot(apt_buildings, aes(x=no_of_storeys)) + geom_histogram(binwidth = 1) ##create histogram for number of storeys in apartment buildings, adjusted bin width to see each storey number
+1. Plot the distribution of a numeric variable. Chose this exercise to understand the distribution of the number of storeys in the apartment buildings.
+
+```{r}
+storeys <- ggplot(apt_buildings, aes(x=no_of_storeys)) + geom_histogram(binwidth = 1)
+```
+
+Here I'm creating a histogram of the number of storeys in the apartment buildings. I also adjusted bin width to see each storey number. 
+
+```{r} 
 print(storeys)
+```
 
+2. Explore the relationship between 2 variables in a plot. I would like to use this exercise to explore the relationship between the year the appartment was built and the number of storeys that it contains to start answering the research question listed in Exercise 1.4. 
 
-## Explore the relationship between 2 variables in a plot. I would like to use this exercise to explore the relationship between the year the appartment was built and the number of storeys that it contains to start answering the research question listed in Exercise 1.4. 
-StoreysXYearBuilt <- ggplot(apt_buildings, aes(x = year_built, y = no_of_storeys)) + geom_point() ##plot relationship between year apartment was built and number of storeys in apartment. 
+```{r}
+StoreysXYearBuilt <- ggplot(apt_buildings, aes(x = year_built, y = no_of_storeys)) + geom_point()
+```
+
+Here I am plotting the relationship between the year the apartment was built and the number of storeys in the apartment. 
+
+```{r}
 print(StoreysXYearBuilt)
+```
 
-## Make a new tibble with a subset of your data, with variables and observations that you are interested in exploring. I am doing this to remove variables I am uninterested in (addresses, property manager, etc.).
-apt_build2.0 <- as_tibble(select(apt_buildings, id, air_conditioning, balconies, laundry_room, no_of_elevators, pets_allowed, year_built, no_of_storeys, no_of_units)) ##create tibble with desired variables, including all observations. 
+3. Make a new tibble with a subset of your data, with variables and observations that you are interested in exploring. I am doing this to remove variables I am uninterested in (addresses, property manager, etc.).
+
+```{r}
+apt_build2.0 <- as_tibble(select(apt_buildings, id, air_conditioning, balconies, laundry_room, no_of_elevators, pets_allowed, year_built, no_of_storeys, no_of_units))
+```
+
+Here I am creating a tibble with my desired variables, including all observations for each of them. 
+
+```{r}
 print(apt_build2.0)
+```
 
-## Filter observations in your data according to your own criteria. Filtering to only see apartments built after 1950 to use for future research questions. 
-apt_1950 <- filter(apt_buildings, year_built >1950) ##filter apartment buildings to only show those built after 1950
+4. Filter observations in your data according to your own criteria. Filtering to only see apartments built after 1950 to use for future research questions. 
+
+```{r}
+apt_1950 <- filter(apt_buildings, year_built >1950)
+```
+
+Here I am filtering to only show apartment buildings that were built after 1950.
+
+```{r}
 print(apt_1950)
+```
 <!----------------------------------------------------------------------------->
 
 # Task 3: Choose research questions 
@@ -181,10 +212,12 @@ print(apt_1950)
 **(4 points)** So far, you have chosen a dataset and gotten familiar with it through exploring the data. You have also brainstormed one research question that interested you (Task 1.4).  Now it's time to pick 4 research questions that you would like to explore in Milestone 2! Write the 4 questions and any additional comments below. 
 
 <!--- *****START HERE***** --->
+
 1. What percent of apartment buildings, built after 1950, have balconies.  
 2. What is the distribution of the number of elevators in the apartment buildings. 
 3. Is there a relationship between the number of elevators in an apartment building and when the apartment was built?
 4. What is the distribution of the number of units in the apartment buildings. 
+
 <!----------------------------->
 
 # Overall reproducibility/Cleanliness/Coherence Checklist 
