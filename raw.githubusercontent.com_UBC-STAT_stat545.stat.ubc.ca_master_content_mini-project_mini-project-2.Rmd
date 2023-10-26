@@ -7,14 +7,14 @@ output: html_document
 
 # Welcome to the rest of your mini data analysis project!
 
-In Milestone 1, you explored your data. and came up with research questions. This time, we will finish up our mini data analysis and obtain results for your data by: 
+In Milestone 1, you explored your data. and came up with research questions. This time, we will finish up our mini data analysis and obtain results for your data by:
 
-- Making summary tables and graphs 
-- Manipulating special data types in R: factors and/or dates and times.
+-   Making summary tables and graphs
+-   Manipulating special data types in R: factors and/or dates and times.
 -   Fitting a model object to your data, and extract a result.
 -   Reading and writing data as separate files.
 
-We will also explore more in depth the concept of *tidy data.* 
+We will also explore more in depth the concept of *tidy data.*
 
 **NOTE**: The main purpose of the mini data analysis is to integrate what you learn in class in an analysis. Although each milestone provides a framework for you to conduct your analysis, it's possible that you might find the instructions too rigid for your data set. If this is the case, you may deviate from the instructions -- just make sure you're demonstrating a wide range of tools and techniques taught in this class.
 
@@ -24,7 +24,7 @@ We will also explore more in depth the concept of *tidy data.*
 
 **To submit this milestone**, make sure to knit this `.Rmd` file to an `.md` file by changing the YAML output settings from `output: html_document` to `output: github_document`. Commit and push all of your work to your mini-analysis GitHub repository, and tag a release on GitHub. Then, submit a link to your tagged release on canvas.
 
-**Points**: This milestone is worth 50 points: 45 for your analysis, and 5 for overall reproducibility, cleanliness, and coherence of the Github submission. 
+**Points**: This milestone is worth 50 points: 45 for your analysis, and 5 for overall reproducibility, cleanliness, and coherence of the Github submission.
 
 **Research Questions**: In Milestone 1, you chose two research questions to focus on. Wherever realistic, your work in this milestone should relate to these research questions whenever we ask for justification behind your work. In the case that some tasks in this milestone don't align well with one of your research questions, feel free to discuss your results in the context of a different research question.
 
@@ -47,20 +47,20 @@ library(datateachr) # <- might contain the data you picked!
 library(tidyverse)
 ```
 
-# Task 1: Process and summarize your data 
+# Task 1: Process and summarize your data
 
-From milestone 1, you should have an idea of the basic structure of your dataset (e.g. number of rows and columns, class types, etc.). Here, we will start investigating your data more in-depth using various data manipulation functions. 
+From milestone 1, you should have an idea of the basic structure of your dataset (e.g. number of rows and columns, class types, etc.). Here, we will start investigating your data more in-depth using various data manipulation functions.
 
-### 1.1 (1 point) 
+### 1.1 (1 point)
 
 First, write out the 4 research questions you defined in milestone 1 were. This will guide your work through milestone 2:
 
 <!-------------------------- Start your work below ---------------------------->
-1. *FILL_THIS_IN*
-2. *FILL_THIS_IN*
-3. *FILL_THIS_IN*
-4. *FILL_THIS_IN*
-<!----------------------------------------------------------------------------->
+
+1.  What percent of apartment buildings, built after 1950, have balconies.\
+2.  What is the distribution of the number of elevators in the apartment buildings.
+3.  Is there a relationship between the number of elevators in an apartment building and when the apartment was built?
+4.  What is the distribution of the number of units in the apartment buildings. <!----------------------------------------------------------------------------->
 
 Here, we will investigate your data using various data manipulation and graphing functions.
 
@@ -77,30 +77,98 @@ Also make sure that you're using dplyr and ggplot2 rather than base R. Outside o
 1.  Compute the *range*, *mean*, and *two other summary statistics* of **one numerical variable** across the groups of **one categorical variable** from your data.
 2.  Compute the number of observations for at least one of your categorical variables. Do not use the function `table()`!
 3.  Create a categorical variable with 3 or more groups from an existing numerical variable. You can use this new variable in the other tasks! *An example: age in years into "child, teen, adult, senior".*
-4. Compute the proportion and counts in each category of one categorical variable across the groups of another categorical variable from your data. Do not use the function `table()`!
+4.  Compute the proportion and counts in each category of one categorical variable across the groups of another categorical variable from your data. Do not use the function `table()`!
 
 **Graphing:**
 
-6. Create a graph of your choosing, make one of the axes logarithmic, and format the axes labels so that they are "pretty" or easier to read.
-7. Make a graph where it makes sense to customize the alpha transparency.
+6.  Create a graph of your choosing, make one of the axes logarithmic, and format the axes labels so that they are "pretty" or easier to read.
+7.  Make a graph where it makes sense to customize the alpha transparency.
 
-Using variables and/or tables you made in one of the "Summarizing" tasks: 
+Using variables and/or tables you made in one of the "Summarizing" tasks:
 
-8. Create a graph that has at least two geom layers. 
-9. Create 3 histograms, with each histogram having different sized bins. Pick the "best" one and explain why it is the best.
+8.  Create a graph that has at least two geom layers.
+9.  Create 3 histograms, with each histogram having different sized bins. Pick the "best" one and explain why it is the best.
 
 Make sure it's clear what research question you are doing each operation for!
 
 <!------------------------- Start your work below ----------------------------->
 
-<!----------------------------------------------------------------------------->
+1.  What percent of apartment buildings, built after 1950, have balconies.
+
+```{r}
+apt_building2.0 <- apt_buildings %>% mutate(age_build = factor(case_when(year_built < 1935 ~ "Pre 1935", year_built < 1950 ~ "1935-1950", TRUE ~ "Post 1950"), levels = c('Pre 1935', '1935-1950', 'Post 1950'))) #create categorical variable (age_build) to describe the time frame that each building was built. Made age_build a factor so that data would be displayed by year rather than alphabetically. 
+
+head(apt_building2.0)
+```
+
+```{r}
+age_balcony <- ggplot(apt_building2.0) + geom_bar(aes(x=age_build, fill=balconies)) + ggtitle("Proportion of Balconies") + xlab("Year Built") + ylab("Number of Buildings") #create bar graph for year built (age_build) and the number of buildings that were built. Filled the bars based on the proportion with and without balconies  
+print(age_balcony)
+
+```
+
+2.  What is the distribution of the number of elevators in the apartment buildings.
+
+```{r}
+Elevators <- apt_buildings %>% group_by(ward) %>% summarize(MinElevator = min(no_of_elevators), MaxElevator = max(no_of_elevators), AvgElevators = mean(no_of_elevators), RangeElevators = MaxElevator - MinElevator)
+print(Elevators) #summarize minimum, maximum, range, and mean number of elevators in the apartment buildings, grouped by the ward the buildings are in. 
+```
+
+```{r}
+
+DistElevator1 <- ggplot(apt_building2.0, aes(x = no_of_elevators)) + geom_histogram(binwidth=1)
+print(DistElevator1)
+DistElevator.39 <- ggplot(apt_building2.0, aes(x = no_of_elevators)) + geom_histogram(binwidth=.39)
+print(DistElevator.39)
+DistElevator5 <- ggplot(apt_building2.0, aes(x = no_of_elevators)) + geom_histogram(binwidth=5)
+print(DistElevator5) 
+#create 3 histograms wit distribution of number of elevators. Each histogram has a different bin width
+
+```
+The best histogram is the one with bin width of 1 (DistElevator1). This is because the majority of apartment buildings range from containing 0-5 elevators, so breaking down to each number between 0-10 allows us to see the majority clearly. It is important to note that there is one building that contains 32 elevators, by adjusting the scale on the Y-axis I can see this more clearly. 
+
+3.  Is there a relationship between the number of elevators in an apartment building and when the apartment was built?
+
+```{r}
+ElevatorAge <- apt_building2.0 %>% group_by(age_build) %>% summarize(MinElevator = min(no_of_elevators), MaxElevator = max(no_of_elevators), AvgElevators = mean(no_of_elevators), RangeElevators = MaxElevator - MinElevator) # summarize minimum, maximum, average number, and mean number of elevators grouped by the categorical year the building was built.
+print(ElevatorAge)  
+```
+
+```{r}
+YearXElevators <- ggplot(apt_building2.0, aes(x = year_built, y = no_of_elevators)) + geom_point(aes(color = age_build), size = 3, alpha = 0.4) # plot relationship between year apartment was built and number of elevators in building. Colored by age category of building. Alpha transparency set to 0.4. 
+print(YearXElevators)
+``` 
+Alpha transparency was adjusted for this graph as lots of buildings were built between 1910 and 1980. I wanted a graph that would show this density and not block the number of the buildings built each year. 
+
+4.  What is the distribution of the number of units in the apartment buildings.
+
+```{r}
+apt_building3.0 <- apt_building2.0 %>% mutate(Size = factor(case_when(no_of_units < 50 ~ "Small", no_of_units < 100 ~ "Medium", no_of_units <200 ~ "Large", TRUE ~ "Very Large"), levels = c('Small', 'Medium', 'Large', 'Very Large'))) # create categorical variable and factor for size of apartment building based on the number of units in the building. Asjusted levels so they would rank based on size rather than alphabetically.
+head(apt_building3.0) 
+```
+
+```{r}
+Units<- ggplot(apt_building3.0, aes(x=no_of_units, y=ward)) + ggridges::geom_density_ridges() + geom_vline(aes(xintercept = mean(apt_building3.0$no_of_units))) # create ridge plot to display distribution of number of units based on the ward. Added second geom layer that indicates the mean number of units. 
+print(Units) 
+```
+
+
+ <!----------------------------------------------------------------------------->
 
 ### 1.3 (2 points)
 
 Based on the operations that you've completed, how much closer are you to answering your research questions? Think about what aspects of your research questions remain unclear. Can your research questions be refined, now that you've investigated your data a bit more? Which research questions are yielding interesting results?
 
 <!------------------------- Write your answer here ---------------------------->
+I am closer but have not completed answering all of my questions, mostly because of constraints within the task. This is what remains unknown for each of my questions: 
 
+1. This question still requires me to calculate the proportion of balconies in the "Post 1950" category. I have now created the category and have visualized the proportion in a bar graph, but I still need to calculate it. 
+
+2. I believe this research question is not specific enough, and I am going to adjusted it to look at the distribution of the number of elevators based on the wards the apartment buildings belong to. In specific, I am looking to identify which ward has the highest average number of elevators in its apartment buildings. I found that this would be ward YY followed by ward 23. 
+
+3. I can see that there is not a definitive relationship between when the apartment was built and the number of elevators the apartment contains. What is apparent is that around 1955, there was an overall increase in the number of elevators that has seemed to remain stable. I think a more interesting question would be to look if there is a relationship between the number of storeys in an apartment building and the number of elevators. 
+
+4. I managed to display the distribution of the number of units in the apartment buildings and the ward to which the apartment building is in. However this is not a specific enough research question so I am going to refine it to identify which wards contain the apartment buildings with the most number of units. From the ridge plot I can see that this would be 17, 22, 23, 24. 
 
 <!----------------------------------------------------------------------------->
 
@@ -119,7 +187,7 @@ A reminder of the definition of *tidy* data:
 Based on the definition above, can you identify if your data is tidy or untidy? Go through all your columns, or if you have \>8 variables, just pick 8, and explain whether the data is untidy or tidy.
 
 <!--------------------------- Start your work below --------------------------->
-
+For the purpose of my data analysis, this data frame is tidy. For each of the variables I am using to answer my research questions, the columns are their own variables and each cell contains a value (I am considering NA and appropriate value). The variables that could be considered untidy would be "bike_parking" and "parking_type" as they contain information about multiple variables under a single column. Since I am not using these variable, I am considering my data tidy. 
 <!----------------------------------------------------------------------------->
 
 ### 2.2 (4 points)
@@ -131,24 +199,30 @@ If your data is untidy, then tidy it! Then, untidy it back to it's original stat
 Be sure to explain your reasoning for this task. Show us the "before" and "after".
 
 <!--------------------------- Start your work below --------------------------->
+```{r}
+print(apt_buildings) # view "before" where each variable is within its own column (see variables "id" and "ward")
+untidy<- apt_buildings %>% unite(col = id_ward, c("id", "ward"), sep = "_") #combine columns "id" and "ward" to create untidy data where multiple variables are stored in one column. 
+print(untidy) #view "after" where "id" and "ward" are stored as within one column 
+tidy_again<- untidy %>% separate(id_ward, into = c("id", "ward"), sep="_") #re-tidy date by separating "id_ward" back into two separate columns
+print(tidy_again) #view data that has been tidied 
+```
 
 <!----------------------------------------------------------------------------->
 
 ### 2.3 (4 points)
 
 Now, you should be more familiar with your data, and also have made progress in answering your research questions. Based on your interest, and your analyses, pick 2 of the 4 research questions to continue your analysis in the remaining tasks:
-
 <!-------------------------- Start your work below ---------------------------->
 
-1.  *FILL_THIS_IN*
-2.  *FILL_THIS_IN*
+1.  Is there a relationship between the number of elevators in an apartment building and the number of storeys in the apartment? Please note that I was told that it would be okay to adjust my research questions from Milestone 1. 
+2.  What percent of apartment buildings, built after 1950, have balconies.
 
 <!----------------------------------------------------------------------------->
 
 Explain your decision for choosing the above two research questions.
 
 <!--------------------------- Start your work below --------------------------->
-
+I chose the second question as I am hoping to expand my knowledge with mutate() function to calculate the proportion of apartment buildings, grouped by when they were built, that have balconies. I chose the first question as I want to look for a relationship between two numerical values and I believe that as the number of storeys increases, it would functionally make sense to increase the number of elevators, so I believe I will see a relationship between these two variables. 
 <!----------------------------------------------------------------------------->
 
 Now, try to choose a version of your data that you think will be appropriate to answer these 2 questions. Use between 4 and 8 functions that we've covered so far (i.e. by filtering, cleaning, tidy'ing, dropping irrelevant columns, etc.).
@@ -156,6 +230,17 @@ Now, try to choose a version of your data that you think will be appropriate to 
 (If it makes more sense, then you can make/pick two versions of your data, one for each research question.) 
 
 <!--------------------------- Start your work below --------------------------->
+Here I am creating a version of data to answer question 1. in task 2.3. 
+```{r}
+clean_buildings1 <- apt_buildings %>% select(id, ward, no_of_storeys, no_of_elevators) %>% arrange(id) #order rows by ascedning id and only include id, ward, number of storeys and elevators. 
+head(clean_buildings1)
+```
+
+This is where I am adjusting the data set to answer question 2. from task 2.3. 
+```{r}
+clean_buildings2 <- apt_buildings %>% select(id, ward, year_built, balconies) %>% filter(year_built >1950) %>% arrange(id) # order rows by id, only include buildings built after 1950 and only include variables id, ward, year built and balconies
+head(clean_buildings2)
+```
 
 # Task 3: Modelling
 
@@ -165,9 +250,9 @@ Pick a research question from 1.2, and pick a variable of interest (we'll call i
 
 <!-------------------------- Start your work below ---------------------------->
 
-**Research Question**: FILL_THIS_IN
+**Research Question**: Is there a relationship between the number of elevators in an apartment building and the number of storeys in the apartment? Note: I used my updated research question (I was told this would be okay). 
 
-**Variable of interest**: FILL_THIS_IN
+**Variable of interest**: Number of elevators (no_of_elevators)
 
 <!----------------------------------------------------------------------------->
 
@@ -182,7 +267,10 @@ Fit a model or run a hypothesis test that provides insight on this variable with
     -   You could use `lm()` to test for significance of regression coefficients.
 
 <!-------------------------- Start your work below ---------------------------->
-
+```{r}
+model3.1<- lm(no_of_elevators ~ no_of_storeys, clean_buildings1) # fit model to number of elevators based on the number of storeys in the apartment building. 
+print(model3.1)
+```
 <!----------------------------------------------------------------------------->
 
 ## 3.2 (3 points)
@@ -194,6 +282,9 @@ Produce something relevant from your fitted model: either predictions on Y, or a
 -   Obtain your results using the `broom` package if possible. If your model is not compatible with the broom function you're needing, then you can obtain your results by some other means, but first indicate which broom function is not compatible.
 
 <!-------------------------- Start your work below ---------------------------->
+```{r}
+
+```
 
 <!----------------------------------------------------------------------------->
 
@@ -209,6 +300,10 @@ Take a summary table that you made from Task 1, and write it as a csv file in yo
 -   **Reproducibility criteria**: You should be able to delete the csv file, and remake it simply by knitting this Rmd file.
 
 <!-------------------------- Start your work below ---------------------------->
+```{r}
+library(here)
+write.csv(apt_building2.0,file=here::here("output","apt_building2.csv"), row.names=FALSE)
+```
 
 <!----------------------------------------------------------------------------->
 
