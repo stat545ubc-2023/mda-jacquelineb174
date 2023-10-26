@@ -116,13 +116,13 @@ print(Elevators) #summarize minimum, maximum, range, and mean number of elevator
 
 ```{r}
 
-DistElevator1 <- ggplot(apt_building2.0, aes(x = no_of_elevators)) + geom_histogram(binwidth=1)
-print(DistElevator1)
-DistElevator.39 <- ggplot(apt_building2.0, aes(x = no_of_elevators)) + geom_histogram(binwidth=.39)
+DistElevator1 <- ggplot(apt_building2.0, aes(x = no_of_elevators)) + geom_histogram(binwidth=1) + ggtitle("Distribution of Elevators") + xlab("Number of Elevators") + ylab("Number of Buildings")
+print(DistElevator1) 
+DistElevator.39 <- ggplot(apt_building2.0, aes(x = no_of_elevators)) + geom_histogram(binwidth=.39) + ggtitle("Distribution of Elevators") + xlab("Number of Elevators") + ylab("Number of Buildings")
 print(DistElevator.39)
-DistElevator5 <- ggplot(apt_building2.0, aes(x = no_of_elevators)) + geom_histogram(binwidth=5)
+DistElevator5 <- ggplot(apt_building2.0, aes(x = no_of_elevators)) + geom_histogram(binwidth=5) + ggtitle("Distribution of Elevators") + xlab("Number of Elevators") + ylab("Number of Buildings")
 print(DistElevator5) 
-#create 3 histograms wit distribution of number of elevators. Each histogram has a different bin width
+#create 3 histograms with distribution of number of elevators. Each histogram has a different bin width.
 
 ```
 The best histogram is the one with bin width of 1 (DistElevator1). This is because the majority of apartment buildings range from containing 0-5 elevators, so breaking down to each number between 0-10 allows us to see the majority clearly. It is important to note that there is one building that contains 32 elevators, by adjusting the scale on the Y-axis I can see this more clearly. 
@@ -135,10 +135,10 @@ print(ElevatorAge)
 ```
 
 ```{r}
-YearXElevators <- ggplot(apt_building2.0, aes(x = year_built, y = no_of_elevators)) + geom_point(aes(color = age_build), size = 3, alpha = 0.4) # plot relationship between year apartment was built and number of elevators in building. Colored by age category of building. Alpha transparency set to 0.4. 
+YearXElevators <- ggplot(apt_building2.0, aes(x = year_built, y = no_of_elevators)) + geom_point(aes(color = age_build), size = 3, alpha = 0.4) + ggtitle("Year Built X Number of Elevators") + xlab("Year Built") + ylab("Number of Elevators") # plot relationship between year apartment was built and number of elevators in building. Colored by age category of building. Alpha transparency set to 0.4. 
 print(YearXElevators)
 ``` 
-Alpha transparency was adjusted for this graph as lots of buildings were built between 1910 and 1980. I wanted a graph that would show this density and not block the number of the buildings built each year. 
+Alpha transparency was adjusted for this graph as the majority of buildings were built between 1910 and 1980. I wanted a graph that would show this density and not block the number of the buildings built each year. 
 
 4.  What is the distribution of the number of units in the apartment buildings.
 
@@ -148,7 +148,7 @@ head(apt_building3.0)
 ```
 
 ```{r}
-Units<- ggplot(apt_building3.0, aes(x=no_of_units, y=ward)) + ggridges::geom_density_ridges() + geom_vline(aes(xintercept = mean(apt_building3.0$no_of_units))) # create ridge plot to display distribution of number of units based on the ward. Added second geom layer that indicates the mean number of units. 
+Units<- ggplot(apt_building3.0, aes(x=no_of_units, y=ward)) + ggridges::geom_density_ridges() + geom_vline(aes(xintercept = mean(apt_building3.0$no_of_units))) + ggtitle("Distribution of Units") + xlab("Number of Units") + ylab("Ward") # create ridge plot to display distribution of number of units based on the ward. Added second geom layer that indicates the mean number of units. 
 print(Units) 
 ```
 
@@ -214,7 +214,7 @@ print(tidy_again) #view data that has been tidied
 Now, you should be more familiar with your data, and also have made progress in answering your research questions. Based on your interest, and your analyses, pick 2 of the 4 research questions to continue your analysis in the remaining tasks:
 <!-------------------------- Start your work below ---------------------------->
 
-1.  Is there a relationship between the number of elevators in an apartment building and the number of storeys in the apartment? Please note that I was told that it would be okay to adjust my research questions from Milestone 1. 
+1.  Is there a relationship between the number of elevators in an apartment building and the number of storeys in the     apartment? Please note that I was told that it would be okay to adjust my research questions from Milestone 1. 
 2.  What percent of apartment buildings, built after 1950, have balconies.
 
 <!----------------------------------------------------------------------------->
@@ -230,15 +230,15 @@ Now, try to choose a version of your data that you think will be appropriate to 
 (If it makes more sense, then you can make/pick two versions of your data, one for each research question.) 
 
 <!--------------------------- Start your work below --------------------------->
-Here I am creating a version of data to answer question 1. in task 2.3. 
+Here I am creating a version of data to answer question 1 in task 2.3. 
 ```{r}
-clean_buildings1 <- apt_buildings %>% select(id, ward, no_of_storeys, no_of_elevators) %>% arrange(id) #order rows by ascedning id and only include id, ward, number of storeys and elevators. 
+clean_buildings1 <- apt_buildings %>% select(id, ward, no_of_storeys, no_of_elevators) %>% arrange(id) #order rows by ascending id and only include id, ward, number of storeys and elevators. 
 head(clean_buildings1)
 ```
 
-This is where I am adjusting the data set to answer question 2. from task 2.3. 
+This is where I am adjusting the data set to answer question 2 in task 2.3. 
 ```{r}
-clean_buildings2 <- apt_buildings %>% select(id, ward, year_built, balconies) %>% filter(year_built >1950) %>% arrange(id) # order rows by id, only include buildings built after 1950 and only include variables id, ward, year built and balconies
+clean_buildings2 <- apt_buildings %>% select(id, ward, year_built, balconies)  %>% arrange(id) %>% mutate(age_build = factor(case_when(year_built < 1935 ~ "Pre 1935", year_built < 1950 ~ "1935-1950", TRUE ~ "Post 1950"), levels = c('Pre 1935', '1935-1950', 'Post 1950'))) # order rows by id, select variables (id, ward, year built and balconies), create levels based on category of year built. 
 head(clean_buildings2)
 ```
 
@@ -283,7 +283,7 @@ Produce something relevant from your fitted model: either predictions on Y, or a
 
 <!-------------------------- Start your work below ---------------------------->
 ```{r}
-
+broom::augment(model3.1, newdata = tibble(no_of_storeys = 15:17)) #produce prediction of number of elevators for buildings with storeys ranging from 15-17. This information is contained in column ".fitted" 
 ```
 
 <!----------------------------------------------------------------------------->
@@ -314,6 +314,9 @@ Write your model object from Task 3 to an R binary file (an RDS), and load it ag
 -   The same robustness and reproducibility criteria as in 4.1 apply here.
 
 <!-------------------------- Start your work below ---------------------------->
+```{r}
+
+```
 
 <!----------------------------------------------------------------------------->
 
