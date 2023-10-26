@@ -45,6 +45,7 @@ Begin by loading your data and the tidyverse package below:
 ```{r, message = FALSE}
 library(datateachr) # <- might contain the data you picked!
 library(tidyverse)
+library(here)
 ```
 
 # Task 1: Process and summarize your data
@@ -57,7 +58,7 @@ First, write out the 4 research questions you defined in milestone 1 were. This 
 
 <!-------------------------- Start your work below ---------------------------->
 
-1.  What percent of apartment buildings, built after 1950, have balconies.\
+1.  What percent of apartment buildings, built after 1950, have balconies.
 2.  What is the distribution of the number of elevators in the apartment buildings.
 3.  Is there a relationship between the number of elevators in an apartment building and when the apartment was built?
 4.  What is the distribution of the number of units in the apartment buildings. <!----------------------------------------------------------------------------->
@@ -95,24 +96,30 @@ Make sure it's clear what research question you are doing each operation for!
 
 1.  What percent of apartment buildings, built after 1950, have balconies.
 
+I have created a new variable so that I can begin to group the apartment builds based on when they were built. This allows me to not just filter out all buildings built before 1950, which is important for my updated research question stated in task 1.3.
+
 ```{r}
 apt_building2.0 <- apt_buildings %>% mutate(age_build = factor(case_when(year_built < 1935 ~ "Pre 1935", year_built < 1950 ~ "1935-1950", TRUE ~ "Post 1950"), levels = c('Pre 1935', '1935-1950', 'Post 1950'))) #create categorical variable (age_build) to describe the time frame that each building was built. Made age_build a factor so that data would be displayed by year rather than alphabetically. 
-
 head(apt_building2.0)
 ```
 
+I created a dot plot to begin to look at whether there is a relationship between when the apartment was built, and whether the units contain balconies. Although there is no numerical definition of the proportions, by adjusting the alpha transparency I am able to begin to visualize the relationship. From this plot there seems to be no direct relationship during the years 1950 to 1990, although prior to 1950 it seems more common to not have balconies, and after 1990, it seems to be more common to have balconies. 
+
 ```{r}
-age_balcony <- ggplot(apt_building2.0) + geom_bar(aes(x=age_build, fill=balconies)) + ggtitle("Proportion of Balconies") + xlab("Year Built") + ylab("Number of Buildings") #create bar graph for year built (age_build) and the number of buildings that were built. Filled the bars based on the proportion with and without balconies  
-print(age_balcony)
+age_balcony2 <- ggplot(apt_building2.0) + geom_point(aes(x=year_built, y= balconies, color = age_build), size = 2, alpha = 0.2) + ggtitle("Balconies Present in Buildings") + xlab("Year Built") + ylab("Balconies Present") #create plot to show relationship between year built and presence of balconies. Filled dots based on the time frame they were built, adjusted alpha transparency to show overlapping points. 
+print(age_balcony2)
 
 ```
 
 2.  What is the distribution of the number of elevators in the apartment buildings.
 
+Here I created a table with summary statistics for the number of elevators in each apartment building, grouped by the wards the apartments are in. This allows me to begin investigating the distribution of the number of elevators in each ward. Although my research question does not require me to group the apartment buildings by ward, I was limited by the task to include a categorical variable, and it allows me to investigate a relationship betweent the wards later on.
+
 ```{r}
-Elevators <- apt_buildings %>% group_by(ward) %>% summarize(MinElevator = min(no_of_elevators), MaxElevator = max(no_of_elevators), AvgElevators = mean(no_of_elevators), RangeElevators = MaxElevator - MinElevator)
-print(Elevators) #summarize minimum, maximum, range, and mean number of elevators in the apartment buildings, grouped by the ward the buildings are in. 
+Elevators <- apt_buildings %>% group_by(ward) %>% summarize(MinElevator = min(no_of_elevators, na.rm = TRUE), MaxElevator = max(no_of_elevators, na.rm = TRUE), AvgElevators = mean(no_of_elevators, na.rm = TRUE), RangeElevators = MaxElevator - MinElevator, na.rm = TRUE)
+print(Elevators) #summarize minimum, maximum, range, and mean number of elevators in the apartment buildings, grouped by the ward the buildings are in. Exclude NA values from calcultions 
 ```
+ Below I am creating three histograms to display the distribution of number of elevators in each apartment building. These histogram have varying bin widths. The best histogram is the one with bin width of 1 (DistElevator1). This is because the majority of apartment buildings range from containing 0-5 elevators, so breaking down to each number between 0-10 allows us to see the majority clearly. It is important to note that there is one building that contains 32 elevators, by adjusting the scale on the Y-axis I can see this more clearly. 
 
 ```{r}
 
@@ -125,33 +132,36 @@ print(DistElevator5)
 #create 3 histograms with distribution of number of elevators. Each histogram has a different bin width.
 
 ```
-The best histogram is the one with bin width of 1 (DistElevator1). This is because the majority of apartment buildings range from containing 0-5 elevators, so breaking down to each number between 0-10 allows us to see the majority clearly. It is important to note that there is one building that contains 32 elevators, by adjusting the scale on the Y-axis I can see this more clearly. 
 
 3.  Is there a relationship between the number of elevators in an apartment building and when the apartment was built?
 
+Below is a table of summary statistics for the number of elevators in each apartment building, based on the "age category" in which the building belongs. 
+
 ```{r}
-ElevatorAge <- apt_building2.0 %>% group_by(age_build) %>% summarize(MinElevator = min(no_of_elevators), MaxElevator = max(no_of_elevators), AvgElevators = mean(no_of_elevators), RangeElevators = MaxElevator - MinElevator) # summarize minimum, maximum, average number, and mean number of elevators grouped by the categorical year the building was built.
+ElevatorAge <- apt_building2.0 %>% group_by(age_build) %>% summarize(MinElevator = min(no_of_elevators, na.rm = TRUE), MaxElevator = max(no_of_elevators, na.rm = TRUE), AvgElevators = mean(no_of_elevators, na.rm = TRUE), RangeElevators = MaxElevator - MinElevator, na.rm = TRUE) # summarize minimum, maximum, average number, and mean number of elevators grouped by the categorical year the building was built. Exclude NA values from calculations.
 print(ElevatorAge)  
 ```
 
+Below a plot was made to show the relationship between the number of elevators int he building and when it was built. Alpha transparency was adjusted for this graph as the majority of buildings were built between 1910 and 1980. I wanted a graph that would show this density and not block the number of the buildings built each year.
 ```{r}
 YearXElevators <- ggplot(apt_building2.0, aes(x = year_built, y = no_of_elevators)) + geom_point(aes(color = age_build), size = 3, alpha = 0.4) + ggtitle("Year Built X Number of Elevators") + xlab("Year Built") + ylab("Number of Elevators") # plot relationship between year apartment was built and number of elevators in building. Colored by age category of building. Alpha transparency set to 0.4. 
 print(YearXElevators)
 ``` 
-Alpha transparency was adjusted for this graph as the majority of buildings were built between 1910 and 1980. I wanted a graph that would show this density and not block the number of the buildings built each year. 
-
 4.  What is the distribution of the number of units in the apartment buildings.
+
+I created a new categorical variable (Size) to describe the size of the apartment buildings based on the number of units they contain. This would allow me to see the number of apartments in each size category if I wanted to be more specific rather than just looking for the distribution. 
 
 ```{r}
 apt_building3.0 <- apt_building2.0 %>% mutate(Size = factor(case_when(no_of_units < 50 ~ "Small", no_of_units < 100 ~ "Medium", no_of_units <200 ~ "Large", TRUE ~ "Very Large"), levels = c('Small', 'Medium', 'Large', 'Very Large'))) # create categorical variable and factor for size of apartment building based on the number of units in the building. Asjusted levels so they would rank based on size rather than alphabetically.
 head(apt_building3.0) 
 ```
 
+The ridge plot below allows me to look at the distribution of units in the buildings based on the wards to which they belong. The added vertical line allows me to visualize the average number of units across all wards, and compare the see which wards contain large buildings. 
+
 ```{r}
 Units<- ggplot(apt_building3.0, aes(x=no_of_units, y=ward)) + ggridges::geom_density_ridges() + geom_vline(aes(xintercept = mean(apt_building3.0$no_of_units))) + ggtitle("Distribution of Units") + xlab("Number of Units") + ylab("Ward") # create ridge plot to display distribution of number of units based on the ward. Added second geom layer that indicates the mean number of units. 
 print(Units) 
 ```
-
 
  <!----------------------------------------------------------------------------->
 
@@ -162,11 +172,11 @@ Based on the operations that you've completed, how much closer are you to answer
 <!------------------------- Write your answer here ---------------------------->
 I am closer but have not completed answering all of my questions, mostly because of constraints within the task. This is what remains unknown for each of my questions: 
 
-1. This question still requires me to calculate the proportion of balconies in the "Post 1950" category. I have now created the category and have visualized the proportion in a bar graph, but I still need to calculate it. 
+1. I decided to adjust this research question to determine if after 1950, there was a change in the proportion of buildings with balconies and those without, compared to before 1950. In 1.2 I created a new categorical variable (age_build) to separate the buildings built before 1935, between 1935 and 1950, and after 1950. I plotted this and I can visually see that there does not seem to be a large difference, although I do still need to determine the specific proportions for each age category to see if there is a difference. 
 
 2. I believe this research question is not specific enough, and I am going to adjusted it to look at the distribution of the number of elevators based on the wards the apartment buildings belong to. In specific, I am looking to identify which ward has the highest average number of elevators in its apartment buildings. I found that this would be ward YY followed by ward 23. 
 
-3. I can see that there is not a definitive relationship between when the apartment was built and the number of elevators the apartment contains. What is apparent is that around 1955, there was an overall increase in the number of elevators that has seemed to remain stable. I think a more interesting question would be to look if there is a relationship between the number of storeys in an apartment building and the number of elevators. 
+3. I can see that there is a relationship between when the apartment was built and the number of elevators the apartment contains although it seems to remain constant over time periods, rather than increasing linearly. What is apparent is that around 1955, there was an overall increase in the number of elevators that has seemed to remain stable. I think a more interesting question would be to look if there is a relationship between the number of storeys in an apartment building and the number of elevators. This is a question I will continue to investigate. 
 
 4. I managed to display the distribution of the number of units in the apartment buildings and the ward to which the apartment building is in. However this is not a specific enough research question so I am going to refine it to identify which wards contain the apartment buildings with the most number of units. From the ridge plot I can see that this would be 17, 22, 23, 24. 
 
@@ -187,7 +197,7 @@ A reminder of the definition of *tidy* data:
 Based on the definition above, can you identify if your data is tidy or untidy? Go through all your columns, or if you have \>8 variables, just pick 8, and explain whether the data is untidy or tidy.
 
 <!--------------------------- Start your work below --------------------------->
-For the purpose of my data analysis, this data frame is tidy. For each of the variables I am using to answer my research questions, the columns are their own variables and each cell contains a value (I am considering NA and appropriate value). The variables that could be considered untidy would be "bike_parking" and "parking_type" as they contain information about multiple variables under a single column. Since I am not using these variable, I am considering my data tidy. 
+For the purpose of my data analysis, this data frame is tidy. For each of the variables I am using to answer my research questions, the columns are their own variables and each cell contains a value (I am considering NA an appropriate value). The variables that could be considered untidy would be "bike_parking" and "parking_type" as they contain information about multiple variables under a single column. Since I am not using these variable, I am considering my data tidy. 
 <!----------------------------------------------------------------------------->
 
 ### 2.2 (4 points)
@@ -214,15 +224,16 @@ print(tidy_again) #view data that has been tidied
 Now, you should be more familiar with your data, and also have made progress in answering your research questions. Based on your interest, and your analyses, pick 2 of the 4 research questions to continue your analysis in the remaining tasks:
 <!-------------------------- Start your work below ---------------------------->
 
-1.  Is there a relationship between the number of elevators in an apartment building and the number of storeys in the     apartment? Please note that I was told that it would be okay to adjust my research questions from Milestone 1. 
-2.  What percent of apartment buildings, built after 1950, have balconies.
+1.  Is there a relationship between the number of elevators in an apartment building and the number of storeys in the     apartment?  
+2.  After 1950, was there a change in the proportion of buildings with balconies, compared to those built before 1950.
 
+Please note that I was told that it would be okay to adjust my research questions from Milestone 1.
 <!----------------------------------------------------------------------------->
 
 Explain your decision for choosing the above two research questions.
 
 <!--------------------------- Start your work below --------------------------->
-I chose the second question as I am hoping to expand my knowledge with mutate() function to calculate the proportion of apartment buildings, grouped by when they were built, that have balconies. I chose the first question as I want to look for a relationship between two numerical values and I believe that as the number of storeys increases, it would functionally make sense to increase the number of elevators, so I believe I will see a relationship between these two variables. 
+ I chose the first question as I want to look for a relationship between two numerical values and I believe that as the number of storeys increases, it would functionally make sense to increase the number of elevators, so I believe I will see a relationship between these two variables. I chose the second question as I am hoping to expand my knowledge with mutate() function to calculate the proportion of apartment buildings with balconies, grouped by when they were built.
 <!----------------------------------------------------------------------------->
 
 Now, try to choose a version of your data that you think will be appropriate to answer these 2 questions. Use between 4 and 8 functions that we've covered so far (i.e. by filtering, cleaning, tidy'ing, dropping irrelevant columns, etc.).
@@ -231,12 +242,14 @@ Now, try to choose a version of your data that you think will be appropriate to 
 
 <!--------------------------- Start your work below --------------------------->
 Here I am creating a version of data to answer question 1 in task 2.3. 
+
 ```{r}
 clean_buildings1 <- apt_buildings %>% select(id, ward, no_of_storeys, no_of_elevators) %>% arrange(id) #order rows by ascending id and only include id, ward, number of storeys and elevators. 
 head(clean_buildings1)
 ```
 
 This is where I am adjusting the data set to answer question 2 in task 2.3. 
+
 ```{r}
 clean_buildings2 <- apt_buildings %>% select(id, ward, year_built, balconies)  %>% arrange(id) %>% mutate(age_build = factor(case_when(year_built < 1935 ~ "Pre 1935", year_built < 1950 ~ "1935-1950", TRUE ~ "Post 1950"), levels = c('Pre 1935', '1935-1950', 'Post 1950'))) # order rows by id, select variables (id, ward, year built and balconies), create levels based on category of year built. 
 head(clean_buildings2)
@@ -267,6 +280,8 @@ Fit a model or run a hypothesis test that provides insight on this variable with
     -   You could use `lm()` to test for significance of regression coefficients.
 
 <!-------------------------- Start your work below ---------------------------->
+Below I am fitting a model with the dependent variable being the number of elevators in the apartment building and the independet variable being the number of storeys in the apartment building. 
+
 ```{r}
 model3.1<- lm(no_of_elevators ~ no_of_storeys, clean_buildings1) # fit model to number of elevators based on the number of storeys in the apartment building. 
 print(model3.1)
@@ -282,8 +297,11 @@ Produce something relevant from your fitted model: either predictions on Y, or a
 -   Obtain your results using the `broom` package if possible. If your model is not compatible with the broom function you're needing, then you can obtain your results by some other means, but first indicate which broom function is not compatible.
 
 <!-------------------------- Start your work below ---------------------------->
+Below I am creating a prediction for the number of elevators that would be in buildings with the number of storeys ranging from 15-17. The prediction can be found in the ".fitted" column. 
+
 ```{r}
-broom::augment(model3.1, newdata = tibble(no_of_storeys = 15:17)) #produce prediction of number of elevators for buildings with storeys ranging from 15-17. This information is contained in column ".fitted" 
+model3.2 <- broom::augment(model3.1, newdata = tibble(no_of_storeys = 15:17)) #produce prediction of number of elevators for buildings with storeys ranging from 15-17. This information is contained in column ".fitted" 
+print(model3.2)
 ```
 
 <!----------------------------------------------------------------------------->
@@ -301,7 +319,6 @@ Take a summary table that you made from Task 1, and write it as a csv file in yo
 
 <!-------------------------- Start your work below ---------------------------->
 ```{r}
-library(here)
 write.csv(apt_building2.0,file=here::here("output","apt_building2.csv"), row.names=FALSE)
 ```
 
@@ -315,7 +332,8 @@ Write your model object from Task 3 to an R binary file (an RDS), and load it ag
 
 <!-------------------------- Start your work below ---------------------------->
 ```{r}
-
+saveRDS(model3.2, file = here::here("output","model32.rds")) #how do i get this into output? 
+readRDS(file = here::here("output","model32.rds"))
 ```
 
 <!----------------------------------------------------------------------------->
