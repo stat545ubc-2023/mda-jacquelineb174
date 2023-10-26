@@ -196,7 +196,7 @@ print(age_balcony2)
 
     ## Warning: Removed 13 rows containing missing values (`geom_point()`).
 
-![](raw.githubusercontent.com_UBC-STAT_stat545.stat.ubc.ca_master_content_mini-project_mini-project-2_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+![](MiniDataAnalysis2_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
 
 2.  What is the distribution of the number of elevators in the apartment
     buildings.
@@ -246,7 +246,7 @@ print(DistElevator1)
 
     ## Warning: Removed 5 rows containing non-finite values (`stat_bin()`).
 
-![](raw.githubusercontent.com_UBC-STAT_stat545.stat.ubc.ca_master_content_mini-project_mini-project-2_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+![](MiniDataAnalysis2_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
 ``` r
 DistElevator.39 <- ggplot(apt_building2.0, aes(x = no_of_elevators)) + geom_histogram(binwidth=.39) + ggtitle("Distribution of Elevators") + xlab("Number of Elevators") + ylab("Number of Buildings")
@@ -255,7 +255,7 @@ print(DistElevator.39)
 
     ## Warning: Removed 5 rows containing non-finite values (`stat_bin()`).
 
-![](raw.githubusercontent.com_UBC-STAT_stat545.stat.ubc.ca_master_content_mini-project_mini-project-2_files/figure-gfm/unnamed-chunk-5-2.png)<!-- -->
+![](MiniDataAnalysis2_files/figure-gfm/unnamed-chunk-5-2.png)<!-- -->
 
 ``` r
 DistElevator5 <- ggplot(apt_building2.0, aes(x = no_of_elevators)) + geom_histogram(binwidth=5) + ggtitle("Distribution of Elevators") + xlab("Number of Elevators") + ylab("Number of Buildings")
@@ -264,7 +264,7 @@ print(DistElevator5)
 
     ## Warning: Removed 5 rows containing non-finite values (`stat_bin()`).
 
-![](raw.githubusercontent.com_UBC-STAT_stat545.stat.ubc.ca_master_content_mini-project_mini-project-2_files/figure-gfm/unnamed-chunk-5-3.png)<!-- -->
+![](MiniDataAnalysis2_files/figure-gfm/unnamed-chunk-5-3.png)<!-- -->
 
 ``` r
 #create 3 histograms with distribution of number of elevators. Each histogram has a different bin width.
@@ -302,8 +302,8 @@ print(YearXElevators)
 
     ## Warning: Removed 16 rows containing missing values (`geom_point()`).
 
-![](raw.githubusercontent.com_UBC-STAT_stat545.stat.ubc.ca_master_content_mini-project_mini-project-2_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
-4. What is the distribution of the number of units in the apartment
+![](MiniDataAnalysis2_files/figure-gfm/unnamed-chunk-7-1.png)<!-- --> 4.
+What is the distribution of the number of units in the apartment
 buildings.
 
 I created a new categorical variable (Size) to describe the size of the
@@ -349,7 +349,7 @@ print(Units)
 
     ## Picking joint bandwidth of 24.6
 
-![](raw.githubusercontent.com_UBC-STAT_stat545.stat.ubc.ca_master_content_mini-project_mini-project-2_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+![](MiniDataAnalysis2_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
 
 <!----------------------------------------------------------------------------->
 
@@ -729,7 +729,7 @@ Use the functions `saveRDS()` and `readRDS()`.
 <!-------------------------- Start your work below ---------------------------->
 
 ``` r
-saveRDS(model3.2, file = here::here("output","model32.rds")) #how do i get this into output? 
+saveRDS(model3.2, file = here::here("output","model32.rds"))  
 readRDS(file = here::here("output","model32.rds"))
 ```
 

@@ -332,7 +332,7 @@ Write your model object from Task 3 to an R binary file (an RDS), and load it ag
 
 <!-------------------------- Start your work below ---------------------------->
 ```{r}
-saveRDS(model3.2, file = here::here("output","model32.rds")) #how do i get this into output? 
+saveRDS(model3.2, file = here::here("output","model32.rds"))  
 readRDS(file = here::here("output","model32.rds"))
 ```
 
